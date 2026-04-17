@@ -1,5 +1,6 @@
 package com.interviewplatform.backend.controller;
 
+import com.interviewplatform.backend.dto.LoginRequest;
 import com.interviewplatform.backend.dto.RegisterRequest;
 import com.interviewplatform.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -15,5 +16,9 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@RequestBody RegisterRequest request) {
         return authService.register(request);
+    }
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 }

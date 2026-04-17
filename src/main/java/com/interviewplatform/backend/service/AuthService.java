@@ -1,5 +1,6 @@
 package com.interviewplatform.backend.service;
 
+import com.interviewplatform.backend.dto.LoginRequest;
 import com.interviewplatform.backend.dto.RegisterRequest;
 import com.interviewplatform.backend.entity.User;
 import com.interviewplatform.backend.repository.UserRepository;
@@ -30,5 +31,16 @@ public class AuthService {
         userRepository.save(user);
 
         return "User registered successfully";
+    }
+    public String login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return "Login successful"; // JWT will come next
     }
 }
