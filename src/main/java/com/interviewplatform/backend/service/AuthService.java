@@ -4,10 +4,10 @@ import com.interviewplatform.backend.dto.LoginRequest;
 import com.interviewplatform.backend.dto.RegisterRequest;
 import com.interviewplatform.backend.entity.User;
 import com.interviewplatform.backend.repository.UserRepository;
+import com.interviewplatform.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -32,6 +32,7 @@ public class AuthService {
 
         return "User registered successfully";
     }
+    private final JwtUtil jwtUtil;
     public String login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
@@ -41,6 +42,8 @@ public class AuthService {
             throw new RuntimeException("Invalid password");
         }
 
-        return "Login successful"; // JWT will come next
+        return jwtUtil.generateToken(user.getEmail()); // 🔥 return token
     }
+
+
 }
