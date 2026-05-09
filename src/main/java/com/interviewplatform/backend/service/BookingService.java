@@ -10,6 +10,8 @@ import com.interviewplatform.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -41,5 +43,12 @@ public class BookingService {
         bookingRepository.save(booking);
 
         return "Interview booked successfully";
+    }
+    public List<Booking> getStudentBookings(Long studentId) {
+        return bookingRepository.findByStudentId(studentId);
+    }
+
+    public List<Booking> getInterviewerBookings(Long interviewerId) {
+        return bookingRepository.findBySlotInterviewerId(interviewerId);
     }
 }
