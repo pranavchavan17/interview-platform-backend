@@ -28,4 +28,9 @@ public class BookingController {
     public List<Booking> getInterviewerBookings(@PathVariable Long interviewerId) {
         return bookingService.getInterviewerBookings(interviewerId);
     }
+
+    @PutMapping("/cancel/{bookingId}")
+    public String cancelBooking(@PathVariable Long bookingId) {
+        return bookingService.cancelBooking(bookingId);
+    }
 }

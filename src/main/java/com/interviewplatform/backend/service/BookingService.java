@@ -51,4 +51,18 @@ public class BookingService {
     public List<Booking> getInterviewerBookings(Long interviewerId) {
         return bookingRepository.findBySlotInterviewerId(interviewerId);
     }
+    public String cancelBooking(Long bookingId) {
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        booking.setStatus("CANCELLED");
+
+        TimeSlot slot = booking.getSlot();
+        slot.setBooked(false);
+
+        bookingRepository.save(booking);
+
+        return "Booking cancelled successfully";
+    }
 }
