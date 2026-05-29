@@ -22,7 +22,7 @@ public class Booking {
     @JoinColumn(name = "student_id")
     private User student;
 
-    @OneToOne
-    @JoinColumn(name = "slot_id", unique = true)
+    @ManyToOne
+    @JoinColumn(name = "slot_id")
     private TimeSlot slot;
 }

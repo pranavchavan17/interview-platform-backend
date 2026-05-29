@@ -5,6 +5,5 @@ import lombok.Data;
 @Data
 public class BookingRequest {
 
-    private Long studentId;
     private Long slotId;
 }

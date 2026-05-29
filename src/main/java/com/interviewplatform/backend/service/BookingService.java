@@ -8,6 +8,8 @@ import com.interviewplatform.backend.repository.BookingRepository;
 import com.interviewplatform.backend.repository.TimeSlotRepository;
 import com.interviewplatform.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +24,12 @@ public class BookingService {
 
     public String bookSlot(BookingRequest request) {
 
-        User student = userRepository.findById(request.getStudentId())
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User student = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         TimeSlot slot = timeSlotRepository.findById(request.getSlotId())
@@ -44,6 +51,7 @@ public class BookingService {
 
         return "Interview booked successfully";
     }
+
     public List<Booking> getStudentBookings(Long studentId) {
         return bookingRepository.findByStudentId(studentId);
     }
@@ -51,6 +59,7 @@ public class BookingService {
     public List<Booking> getInterviewerBookings(Long interviewerId) {
         return bookingRepository.findBySlotInterviewerId(interviewerId);
     }
+
     public String cancelBooking(Long bookingId) {
 
         Booking booking = bookingRepository.findById(bookingId)
