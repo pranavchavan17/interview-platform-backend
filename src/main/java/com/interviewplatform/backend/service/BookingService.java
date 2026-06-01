@@ -2,6 +2,7 @@ package com.interviewplatform.backend.service;
 
 import com.interviewplatform.backend.dto.BookingRequest;
 import com.interviewplatform.backend.entity.Booking;
+import com.interviewplatform.backend.entity.BookingStatus;
 import com.interviewplatform.backend.entity.TimeSlot;
 import com.interviewplatform.backend.entity.User;
 import com.interviewplatform.backend.repository.BookingRepository;
@@ -13,7 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+import com.interviewplatform.backend.dto.BookingResponse;
+import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -24,6 +26,7 @@ public class BookingService {
 
     public String bookSlot(BookingRequest request) {
 
+        System.out.println("BOOK SLOT API HIT");
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
@@ -44,7 +47,7 @@ public class BookingService {
         Booking booking = Booking.builder()
                 .student(student)
                 .slot(slot)
-                .status("CONFIRMED")
+                .status(BookingStatus.PENDING)
                 .build();
 
         bookingRepository.save(booking);
@@ -52,12 +55,30 @@ public class BookingService {
         return "Interview booked successfully";
     }
 
-    public List<Booking> getStudentBookings(Long studentId) {
-        return bookingRepository.findByStudentId(studentId);
+    public List<BookingResponse> getStudentBookings(Long studentId) {
+
+        return bookingRepository.findByStudentId(studentId)
+                .stream()
+                .map(booking -> BookingResponse.builder()
+                        .bookingId(booking.getId())
+                        .status(booking.getStatus().name())
+                        .slotId(booking.getSlot().getId())
+                        .studentId(booking.getStudent().getId())
+                        .build())
+                .collect(Collectors.toList());
     }
 
-    public List<Booking> getInterviewerBookings(Long interviewerId) {
-        return bookingRepository.findBySlotInterviewerId(interviewerId);
+    public List<BookingResponse> getInterviewerBookings(Long interviewerId) {
+
+        return bookingRepository.findBySlotInterviewerId(interviewerId)
+                .stream()
+                .map(booking -> BookingResponse.builder()
+                        .bookingId(booking.getId())
+                        .status(booking.getStatus().name())
+                        .slotId(booking.getSlot().getId())
+                        .studentId(booking.getStudent().getId())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public String cancelBooking(Long bookingId) {
@@ -65,7 +86,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        booking.setStatus("CANCELLED");
+        booking.setStatus(BookingStatus.CANCELLED);
 
         TimeSlot slot = booking.getSlot();
         slot.setBooked(false);
@@ -73,5 +94,27 @@ public class BookingService {
         bookingRepository.save(booking);
 
         return "Booking cancelled successfully";
+    }
+    public String confirmBooking(Long bookingId) {
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        booking.setStatus(BookingStatus.CONFIRMED);
+
+        bookingRepository.save(booking);
+
+        return "Booking confirmed successfully";
+    }
+    public String completeBooking(Long bookingId) {
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        booking.setStatus(BookingStatus.COMPLETED);
+
+        bookingRepository.save(booking);
+
+        return "Interview completed successfully";
     }
 }

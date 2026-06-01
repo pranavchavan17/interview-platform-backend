@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import com.interviewplatform.backend.dto.BookingResponse;
 @RestController
 @RequestMapping("/api/v1/bookings")
 @RequiredArgsConstructor
@@ -19,18 +19,28 @@ public class BookingController {
     public String bookSlot(@RequestBody BookingRequest request) {
         return bookingService.bookSlot(request);
     }
+
     @GetMapping("/student/{studentId}")
-    public List<Booking> getStudentBookings(@PathVariable Long studentId) {
+    public List<BookingResponse> getStudentBookings(@PathVariable Long studentId) {
         return bookingService.getStudentBookings(studentId);
     }
 
     @GetMapping("/interviewer/{interviewerId}")
-    public List<Booking> getInterviewerBookings(@PathVariable Long interviewerId) {
+    public List<BookingResponse> getInterviewerBookings(@PathVariable Long interviewerId) {
         return bookingService.getInterviewerBookings(interviewerId);
     }
 
     @PutMapping("/cancel/{bookingId}")
     public String cancelBooking(@PathVariable Long bookingId) {
         return bookingService.cancelBooking(bookingId);
+    }
+
+    @PutMapping("/confirm/{bookingId}")
+    public String confirmBooking(@PathVariable Long bookingId) {
+        return bookingService.confirmBooking(bookingId);
+    }
+    @PutMapping("/complete/{bookingId}")
+    public String completeBooking(@PathVariable Long bookingId) {
+        return bookingService.completeBooking(bookingId);
     }
 }
